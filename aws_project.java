@@ -44,6 +44,13 @@ import com.amazonaws.services.ec2.model.RebootInstancesResult;
 import com.amazonaws.services.ec2.model.Image;
 import com.amazonaws.services.ec2.model.DescribeImagesRequest;
 
+//monitoring instances
+import com.amazonaws.services.ec2.model.MonitorInstancesRequest;
+import com.amazonaws.services.ec2.model.UnmonitorInstancesRequest;
+
+//terminate instances
+import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
+
 public class aws_project{
 
 	/*
@@ -91,16 +98,17 @@ public class aws_project{
        		System.out.println("------------------------------------------------------------");
        		System.out.println("           Amazon AWS Control Panel using SDK               ");
        		System.out.println("                                                            ");
-		        System.out.println("           Cloud Computing, Computer Science Department     ");
-       		System.out.println("                            at Chungbuk National University ");
+		    System.out.println("           Cloud Computing, Computer Science Department     ");
+		    System.out.println("                            at Chungbuk National University ");
        		System.out.println("------------------------------------------------------------");
-		        System.out.println("   1. list instance           2. available zones            ");
-      		System.out.println("   3. start instance          4. available regions          ");
-		        System.out.println("   5. stop instance           6. create instance            ");
-		        System.out.println("   7. reboot instance         8. list images                ");
-		        System.out.println("                              99. quit                      ");
-		        System.out.println("------------------------------------------------------------");
-		        System.out.print("Enter an integer: ");
+		    System.out.println("   1. list instance           2. available zones            ");
+		    System.out.println("   3. start instance          4. available regions          ");
+		    System.out.println("   5. stop instance           6. create instance            ");
+		    System.out.println("   7. reboot instance         8. list images                ");
+		    System.out.println("   9. monitoring instance     10. stop monitoring           ");
+		    System.out.println("   11. terminate instance     99. quit                      ");
+		    System.out.println("------------------------------------------------------------");
+		    System.out.print("Enter an integer: ");
 
 			num = menu.nextInt();
 			menu.nextLine();
@@ -130,6 +138,15 @@ public class aws_project{
 				case 8:
 					listImages();
 					break;
+				case 9:
+					monitoringInstances();
+					break;
+				case 10:
+					stopMonitoring();
+					break;
+				case 11:
+					terminateInstances();
+					break;
 				case 99:
 					System.out.println("System Quit");
 					return ;
@@ -137,6 +154,56 @@ public class aws_project{
 		}
 	}
 	
+	//11. terminate instances
+	private static void terminateInstances() {
+		Scanner scanner = new Scanner(System.in);
+		System.out.printf("Enter instance id :");
+		String instance_id = scanner.nextLine();
+		      
+		try {
+			TerminateInstancesRequest request = new TerminateInstancesRequest().withInstanceIds(instance_id);
+		    ec2.terminateInstances(request);
+		    System.out.printf("Successfully terminated instance %s", instance_id);
+		}catch(Exception e) {
+			throw new AmazonClientException("You cannot create an instance. Check the value you entered", e);
+		}
+	}
+	
+	
+	//10. stop monitoring
+	private static void stopMonitoring() {
+		
+		String instance_id;
+		Scanner scanner = new Scanner(System.in);
+		
+		System.out.println("Enter instance id : ");
+		instance_id = scanner.nextLine();
+		
+		try {
+			UnmonitorInstancesRequest request = new UnmonitorInstancesRequest().withInstanceIds(instance_id);
+			ec2.unmonitorInstances(request);
+		}catch(Exception e) {
+			throw new AmazonClientException("You cannot stop monitoring this instance. Check the value you entered", e);
+		}
+	}
+
+	//9. start monitoring
+	private static void monitoringInstances() {
+
+		String instance_id;
+		Scanner scanner = new Scanner(System.in);
+		
+		System.out.println("Enter instance id : ");
+		instance_id = scanner.nextLine();
+		
+		try {
+			MonitorInstancesRequest request = new MonitorInstancesRequest().withInstanceIds(instance_id);
+			ec2.monitorInstances(request);
+		}catch(Exception e) {
+			throw new AmazonClientException("You cannot start monitoring this instance. Check the value you entered", e);
+		}
+	}
+
 	//1. list instances
 	private static void listInstances(){
 	
